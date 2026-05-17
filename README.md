@@ -10,8 +10,8 @@ This repository contains a Text-to-SQL benchmark, prompt-chaining pipeline, and 
 - `task1/` — Task 1 deliverables: ground truth SQL, evaluation framework, Task 1 summary, and benchmark results
 - `task2/` — Task 2 deliverables: manual query decompositions for all 50 benchmark questions
 - `submission/` — submission artifacts and progress tracking
-- `Dockerfile` & `docker-compose.yml` — local development environment with PostgreSQL and app support
-- `database.py`, `sql_generator.py`, `validator.py`, `executor.py`, `main.py` — core Text-to-SQL system files
+- `Dockerfile` & `docker-compose.yml` — local development environment with PostgreSQL, FastAPI backend, and Streamlit UI support
+- `database.py`, `sql_generator.py`, `validator.py`, `executor.py`, `main.py`, `streamlit_app.py` — core Text-to-SQL system files
 - `prompts/templates.py` — prompt templates for SQL decomposition, generation, and fixes
 - `seed.sql` — database seed file for the classicmodels schema
 - `sql_questions_only.csv` — benchmark questions
@@ -68,13 +68,23 @@ or
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### Option 2: Docker
+### Option 2: Streamlit UI
+
+Start the backend first with one of the Python commands above, then run Streamlit in a second terminal:
+
+```bash
+python -m streamlit run streamlit_app.py
+```
+
+Open `http://localhost:8501` in your browser. The Streamlit UI sends requests to `http://localhost:8000/agent/sql` by default.
+
+### Option 3: Docker
 
 ```bash
 docker compose up --build
 ```
 
-The app should be available at `http://localhost:8000`.
+The API app should be available at `http://localhost:8000` and the Streamlit UI at `http://localhost:8501`.
 
 ---
 
@@ -178,7 +188,7 @@ The JSON file includes per-question generated SQL, execution outcome, correctnes
 - `task1/Task1_Part1_Ground_Truth.md` — ground truth SQL and query results
 - `task1/Task1_Part2_Evaluation_Framework.md` — evaluation methodology and metrics
 - `task2/Task2_Query_Decompositions.md` — intent/tables/columns/filters/joins/aggregation for each benchmark question
-- `submission/task_progress.md` — current progress and status
+- `task_progress.md` — current progress and status
 
 ---
 
