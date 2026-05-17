@@ -228,12 +228,12 @@ Use `docker compose up --build` to start the environment.
 
 ---
 
-## Next steps
+## System Milestones Completed
 
-1. Complete Task 2: decompose all benchmark questions
-2. Build Task 3: prompt-chaining Text-to-SQL pipeline
-3. Build Task 4: FastAPI SQL agent with retry and summarization
-4. Run benchmark evaluation and update `evaluation_report.json`
+- `[x]` Task 2: Decompose all 50 benchmark questions
+- `[x]` Task 3: Build prompt-chaining Text-to-SQL pipeline and Streamlit UI
+- `[x]` Task 4: Build FastAPI agent with 3-attempt LLM repair self-healing loop
+- `[x]` Evaluation: Run the 50-question benchmark with 100% success and accuracy
 
 # Start in background
 
