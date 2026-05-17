@@ -20,10 +20,11 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from database import test_connection
+from database import test_connection, execute_query
 from executor import run_with_retry
 from llm_client import call_llm
 from prompts.templates import SUMMARY_PROMPT
+from prompts.ground_truth import GROUND_TRUTH_SQL
 from sql_generator import decompose_question, generate_sql
 
 # ── Logging setup ─────────────────────────────────────────────────────────────
@@ -95,6 +96,39 @@ def _generate_summary(question: str, result: dict) -> str:
         return call_llm(prompt, temperature=0.2, max_tokens=150)
     except Exception:
         return f"Query returned {result.get('row_count', 0)} rows."
+
+
+def _compare_results(gen_res: dict, gt_res: dict, has_order_by: bool) -> bool:
+    """
+    Compare generated query result against ground truth query result.
+    Order-independent by default unless has_order_by is True.
+    """
+    if gen_res.get("error") or gt_res.get("error"):
+        return False
+
+    gen_rows = gen_res.get("rows", [])
+    gt_rows = gt_res.get("rows", [])
+
+    if len(gen_rows) != len(gt_rows):
+        return False
+
+    if not gen_rows and not gt_rows:
+        return True
+
+    # Normalize rows by converting to sorted tuple of key-value string pairs
+    def normalize(rows):
+        normalized = []
+        for r in rows:
+            normalized.append(tuple(sorted((k, str(v)) for k, v in r.items())))
+        return normalized
+
+    norm_gen = normalize(gen_rows)
+    norm_gt = normalize(gt_rows)
+
+    if has_order_by:
+        return norm_gen == norm_gt
+    else:
+        return sorted(norm_gen) == sorted(norm_gt)
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
@@ -216,6 +250,7 @@ def evaluate_benchmark():
     """
     Run the full benchmark CSV dataset through the agent and return
     an evaluation report (Task 3 & 4 evaluation requirement).
+    Calculates both Execution Success Rate (ESR) and Execution Accuracy (EA) against ground-truth.
     """
     import csv
 
@@ -232,6 +267,7 @@ def evaluate_benchmark():
 
     results = []
     success_count = 0
+    correct_count = 0
     retry_count = 0
     failed_count = 0
 
@@ -239,20 +275,42 @@ def evaluate_benchmark():
         req = QuestionRequest(question=q)
         try:
             resp = agent_sql(req)
+
+            # Fetch ground truth and run it to get expected result for Execution Accuracy (EA)
+            gt_sql = GROUND_TRUTH_SQL.get(q)
+            is_correct = False
+            gt_error = None
+
+            if gt_sql:
+                gt_res = execute_query(gt_sql)
+                if gt_res["error"]:
+                    gt_error = gt_res["error"]
+                else:
+                    # Compare agent's result against ground-truth result
+                    has_order_by = "order by" in gt_sql.lower()
+                    is_correct = _compare_results(resp["result"], gt_res, has_order_by)
+            else:
+                # If no ground truth mapped, default to whether it executed successfully
+                is_correct = resp["status"] == "success"
+
             row = {
                 "question": q,
                 "generated_sql": resp["sql"] if isinstance(resp, dict) else resp.sql,
                 "executed_successfully": (resp["status"] if isinstance(resp, dict) else resp.status) == "success",
+                "result_correct": is_correct,
                 "retry_needed": resp["retried"] if isinstance(resp, dict) else resp.retried,
                 "attempts": resp["attempts"] if isinstance(resp, dict) else resp.attempts,
                 "status": resp["status"] if isinstance(resp, dict) else resp.status,
                 "summary": resp["summary"] if isinstance(resp, dict) else resp.summary,
                 "execution_time_ms": resp["execution_time_ms"] if isinstance(resp, dict) else resp.execution_time_ms,
+                "gt_error": gt_error
             }
             if row["executed_successfully"]:
                 success_count += 1
             else:
                 failed_count += 1
+            if row["result_correct"]:
+                correct_count += 1
             if row["retry_needed"]:
                 retry_count += 1
         except Exception as e:
@@ -260,11 +318,13 @@ def evaluate_benchmark():
                 "question": q,
                 "generated_sql": "",
                 "executed_successfully": False,
+                "result_correct": False,
                 "retry_needed": False,
                 "attempts": 0,
                 "status": "error",
                 "summary": str(e),
                 "execution_time_ms": 0,
+                "gt_error": None
             }
             failed_count += 1
 
@@ -274,9 +334,11 @@ def evaluate_benchmark():
     return {
         "total_questions": total,
         "success_count": success_count,
+        "correct_count": correct_count,
         "failed_count": failed_count,
         "retry_count": retry_count,
         "execution_success_rate": f"{round(success_count / total * 100, 1)}%",
+        "execution_accuracy": f"{round(correct_count / total * 100, 1)}%",
         "retry_rate": f"{round(retry_count / total * 100, 1)}%",
         "results": results,
     }

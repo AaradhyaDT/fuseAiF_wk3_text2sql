@@ -2,27 +2,30 @@
 database.py — PostgreSQL connection and safe query execution
 """
 
-import psycopg2
-import psycopg2.extras
+import os
+import psycopg
 import time
 import logging
 from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-# ── Connection config — update with your actual credentials ──────────────────
+# ── Connection config — read from environment variables with sane defaults ──
+# Update these environment variables instead of hardcoding credentials:
+#   DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
 DB_CONFIG = {
-    "host": "localhost",
-    "port": 5432,
-    "database": "classicmodels",   # change to your DB name
-    "user": "postgres",            # change to your user
-    "password": "password",        # change to your password
+    "host": os.getenv("DB_HOST", "localhost"),
+    "port": int(os.getenv("DB_PORT", "5432")),
+    "dbname": os.getenv("DB_NAME", "classicmodels"),
+    "user": os.getenv("DB_USER", "postgres"),
+    "password": os.getenv("DB_PASSWORD", "password"),
 }
 
 
 def get_connection():
-    """Return a live psycopg2 connection."""
-    return psycopg2.connect(**DB_CONFIG)
+    """Return a live psycopg (psycopg3) connection."""
+    # psycopg.connect returns a connection usable as a context manager
+    return psycopg.connect(**DB_CONFIG)
 
 
 def execute_query(sql: str, timeout_ms: int = 10_000) -> dict:
@@ -53,7 +56,8 @@ def execute_query(sql: str, timeout_ms: int = 10_000) -> dict:
             with conn.cursor() as cur:
                 cur.execute(f"SET statement_timeout = {timeout_ms};")
 
-            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            # Use dict row factory to get rows as mappings
+            with conn.cursor(row_factory=psycopg.rows.dict_row) as cur:
                 cur.execute(sql)
                 rows = cur.fetchall()
                 result["columns"] = list(rows[0].keys()) if rows else []

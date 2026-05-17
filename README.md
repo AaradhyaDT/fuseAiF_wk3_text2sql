@@ -64,14 +64,27 @@ pip install -r requirements.txt
 ```
 
 ### 3. Configure
-Edit `database.py` → update `DB_CONFIG` with your PostgreSQL credentials.
+Edit `database.py` only if you want to override defaults. It now reads credentials from environment variables:
+- `DB_HOST`
+- `DB_PORT`
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+- `GROQ_API_KEY`
 
-Set your Groq API key:
-```bash
-export GROQ_API_KEY="gsk_your_key_here"
+Create a `.env` file from the example:
+```powershell
+copy .env.example .env
 ```
 
-Or edit `llm_client.py` and paste it directly (not recommended for production).
+Then fill in your values in `.env`.
+
+Set your Groq API key by editing `.env` or exporting it in your shell:
+```powershell
+$env:GROQ_API_KEY = "gsk_your_key_here"
+```
+
+Avoid hardcoding credentials directly in `llm_client.py`.
 
 ### 4. Copy benchmark CSV
 ```bash

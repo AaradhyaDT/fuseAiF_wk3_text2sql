@@ -1,6 +1,7 @@
 fastapi==0.115.0
 uvicorn[standard]==0.30.6
-psycopg2-binary==2.9.9
+# Use modern psycopg (psycopg3) with binary wheel to avoid building on Windows
+psycopg[binary]
 pydantic==2.7.4
 requests==2.32.3
 python-dotenv==1.0.1
