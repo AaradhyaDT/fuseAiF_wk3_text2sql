@@ -20,7 +20,7 @@
 
 ## Remaining tasks
 
-- [ ] Capture final screenshots for the app, `/agent/sql`, `/evaluate`, and log outputs
+- [x] Capture final screenshots for the app, `/agent/sql`, `/evaluate`, and log outputs
 - [ ] Confirm deployment/package readiness and finalize submission artifacts
 
 ## Notes
@@ -28,4 +28,6 @@
 - `task2/Task2_Query_Decompositions.md` covers all 50 benchmark questions.
 - `main.py` contains the agent endpoint and benchmark evaluation flow.
 - `evaluation_report.json` contains the latest 50-question benchmark results.
+- `submission/Week3_Combined_Submission.md` is available as a merged copy of the plan and submission documents.
+- `submission/screenshots/` stores the final screenshot evidence.
 - `submission/task_progress.md` has been removed so there is a single authoritative progress file.

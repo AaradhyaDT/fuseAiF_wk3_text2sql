@@ -1,4 +1,5 @@
 # Text-to-SQL Agentic System
+
 **Fuse AI Fellowship 2026 — GenAI Week 3**
 
 This repository contains a Text-to-SQL benchmark, prompt-chaining pipeline, and agentic SQL API backed by PostgreSQL.
@@ -9,7 +10,8 @@ This repository contains a Text-to-SQL benchmark, prompt-chaining pipeline, and 
 
 - `task1/` — Task 1 deliverables: ground truth SQL, evaluation framework, Task 1 summary, and benchmark results
 - `task2/` — Task 2 deliverables: manual query decompositions for all 50 benchmark questions
-- `submission/` — submission artifacts and progress tracking
+- `submission/` — submission artifacts, progress tracking, and screenshot captures
+- `submission/screenshots/` — app and agent screenshot assets for final submission evidence
 - `Dockerfile` & `docker-compose.yml` — local development environment with PostgreSQL, FastAPI backend, and Streamlit UI support
 - `database.py`, `sql_generator.py`, `validator.py`, `executor.py`, `main.py`, `streamlit_app.py` — core Text-to-SQL system files
 - `prompts/templates.py` — prompt templates for SQL decomposition, generation, and fixes
@@ -22,6 +24,7 @@ This repository contains a Text-to-SQL benchmark, prompt-chaining pipeline, and 
 ## Setup
 
 ### Prerequisites
+
 - Python 3.11+
 - PostgreSQL (or Docker)
 - `pip` installed
@@ -40,6 +43,7 @@ Create a `.env` file with the required values.
 Use `.env.example` as a template if available.
 
 Required environment variables:
+
 - `DB_HOST`
 - `DB_PORT`
 - `DB_NAME`
@@ -145,7 +149,6 @@ The JSON file includes per-question generated SQL, execution outcome, correctnes
 ├── docker-compose.yml
 ├── README.md
 ├── database.py
-├── docker-compose.yml
 ├── evaluation_report.json
 ├── executor.py
 ├── llm_client.py
@@ -168,6 +171,10 @@ The JSON file includes per-question generated SQL, execution outcome, correctnes
 ├── submission/
 │   ├── Week3_GenAI_Submission.md
 │   ├── Week3_Task_Plan.md
+│   ├── Week3_Combined_Submission.md
+│   ├── screenshots/
+│   │   ├── streamlit_agent_total_columns.png
+│   │   └── streamlit_agent_shipped_orders_usa.png
 │   └── task_progress.md
 └── test_agent.py
 ```
@@ -207,18 +214,22 @@ Use `docker compose up --build` to start the environment.
 3. Build Task 4: FastAPI SQL agent with retry and summarization
 4. Run benchmark evaluation and update `evaluation_report.json`
 
-
 # Start in background
+
 docker compose up -d
 
 # Stop and remove containers
+
 docker compose down -v
 
 # View logs
+
 docker compose logs -f
+
 ```
 
 Notes:
 - The `Dockerfile` uses Python 3.11-slim. The app reads DB config from environment variables, so Docker Compose wires the `db` service hostname for you.
 - If you already have a local Postgres instance on 5432, stop it or change port mapping in `docker-compose.yml`.
 
+```
