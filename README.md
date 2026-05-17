@@ -1,263 +1,189 @@
 # Text-to-SQL Agentic System
 **Fuse AI Fellowship 2026 — GenAI Week 3**
 
-A production-style Text-to-SQL pipeline and agentic API built on FastAPI + PostgreSQL,
-using Groq (free LLM API) for natural language understanding and SQL generation.
+This repository contains a Text-to-SQL benchmark, prompt-chaining pipeline, and agentic SQL API backed by PostgreSQL.
 
 ---
 
-## Architecture
+## What’s in this repo
 
-```
-Natural Language Question
-        │
-        ▼
-┌───────────────────┐
-│  Decomposition    │  llama-3.3-70b via Groq
-│  (sql_generator)  │  → intent, tables, columns, filters, joins
-└────────┬──────────┘
-         │
-         ▼
-┌───────────────────┐
-│  SQL Generation   │  LLM prompt → raw SQL string
-│  (sql_generator)  │
-└────────┬──────────┘
-         │
-         ▼
-┌───────────────────┐
-│  Validation       │  Blocks INSERT/UPDATE/DELETE/DROP etc.
-│  (validator)      │
-└────────┬──────────┘
-         │
-         ▼
-┌───────────────────┐
-│  Execution        │  psycopg2 → PostgreSQL
-│  (executor)       │  Statement timeout: 10s
-└────────┬──────────┘
-         │ Error?
-         ▼
-┌───────────────────┐
-│  LLM Fix + Retry  │  Up to 3 retries (agent) / 1 retry (pipeline)
-│  (executor)       │
-└────────┬──────────┘
-         │
-         ▼
-┌───────────────────┐
-│  Summary          │  LLM → human-readable answer sentence
-│  (main.py)        │
-└───────────────────┘
-```
+- `task1/` — Task 1 deliverables: ground truth SQL, evaluation framework, Task 1 summary, and benchmark results
+- `task2/` — Task 2 deliverables: manual query decompositions for all 50 benchmark questions
+- `submission/` — submission artifacts and progress tracking
+- `Dockerfile` & `docker-compose.yml` — local development environment with PostgreSQL and app support
+- `database.py`, `sql_generator.py`, `validator.py`, `executor.py`, `main.py` — core Text-to-SQL system files
+- `prompts/templates.py` — prompt templates for SQL decomposition, generation, and fixes
+- `seed.sql` — database seed file for the classicmodels schema
+- `sql_questions_only.csv` — benchmark questions
+- `evaluation_report.json` — benchmark evaluation output
 
 ---
 
 ## Setup
 
-### 1. Prerequisites
+### Prerequisites
 - Python 3.11+
-- PostgreSQL with classicmodels database loaded (`seed.sql`)
-- Free Groq API key: https://console.groq.com
+- PostgreSQL (or Docker)
+- `pip` installed
+- `.env` file with database and API credentials
 
-### 2. Install dependencies
+### Install dependencies
+
 ```bash
-cd text2sql
+cd "c:/Users/Aaradhya/Downloads/_Organized/Fuse AI Fellowship/FUSE AIF 2026/WK3/fuseAiF_wk3_text2sql"
 pip install -r requirements.txt
 ```
 
-### 3. Configure
-Edit `database.py` only if you want to override defaults. It now reads credentials from environment variables:
+### Configure environment
+
+Create a `.env` file with the required values.
+Use `.env.example` as a template if available.
+
+Required environment variables:
 - `DB_HOST`
 - `DB_PORT`
 - `DB_NAME`
 - `DB_USER`
 - `DB_PASSWORD`
-- `GROQ_API_KEY`
+- `OPENAI_API_KEY` (or provider-specific API key if configured)
 
-Create a `.env` file from the example:
-```powershell
-copy .env.example .env
-```
+### Database seed
 
-Then fill in your values in `.env`.
+Load the PostgreSQL database with `seed.sql`.
+If using Docker, `docker-compose.yml` should mount and initialize the database automatically.
 
-Set your Groq API key by editing `.env` or exporting it in your shell:
-```powershell
-$env:GROQ_API_KEY = "gsk_your_key_here"
-```
+---
 
-Avoid hardcoding credentials directly in `llm_client.py`.
+## Run locally
 
-### 4. Copy benchmark CSV
-```bash
-cp /path/to/sql_questions_only.csv ./
-```
+### Option 1: Python
 
-### 5. Run the server
 ```bash
 python main.py
-# or
-uvicorn main:app --reload --port 8000
 ```
 
----
+or
 
-## API Endpoints
-
-### Health Check
-```
-GET /health
-```
-```json
-{"status": "ok", "db_connected": true}
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
----
-
-### Task 3 — Pipeline (1 retry)
-```
-POST /pipeline/sql
-Content-Type: application/json
-
-{"question": "Count customers per country"}
-```
-
-**Response:**
-```json
-{
-  "question": "Count customers per country",
-  "decomposition": {
-    "intent": "Count customers grouped by country",
-    "tables": ["customers"],
-    "columns": ["country", "COUNT(customerNumber)"],
-    "filters": [],
-    "joins": [],
-    "aggregation": "COUNT",
-    "group_by": ["country"]
-  },
-  "sql": "SELECT \"country\", COUNT(\"customerNumber\") AS customerCount FROM customers GROUP BY \"country\" ORDER BY customerCount DESC;",
-  "result": {
-    "columns": ["country", "customerCount"],
-    "rows": [{"country": "USA", "customerCount": 36}, ...],
-    "row_count": 27,
-    "execution_time_ms": 8.4,
-    "error": null
-  },
-  "status": "success",
-  "attempts": 1,
-  "retried": false,
-  "execution_time_ms": 1240.5
-}
-```
-
----
-
-### Task 4 — Agent (3 retries + summary)
-```
-POST /agent/sql
-Content-Type: application/json
-
-{"question": "How many shipped orders are from USA customers?"}
-```
-
-**Response:**
-```json
-{
-  "question": "How many shipped orders are from USA customers?",
-  "decomposition": {...},
-  "sql": "SELECT COUNT(*) FROM orders o JOIN customers c ON o.\"customerNumber\" = c.\"customerNumber\" WHERE c.\"country\" = 'USA' AND o.\"status\" = 'Shipped';",
-  "result": {"rows": [{"count": 46}], "row_count": 1, "error": null, ...},
-  "summary": "There are 46 shipped orders from customers in the USA.",
-  "status": "success",
-  "attempts": 1,
-  "retried": false,
-  "execution_time_ms": 1874.3
-}
-```
-
----
-
-### Benchmark Evaluation
-```
-GET /evaluate
-```
-Runs all 50 benchmark questions through the agent and returns:
-```json
-{
-  "total_questions": 50,
-  "success_count": 46,
-  "failed_count": 4,
-  "retry_count": 3,
-  "execution_success_rate": "92.0%",
-  "retry_rate": "6.0%",
-  "results": [...]
-}
-```
-
----
-
-## Project Structure
-
-```
-text2sql/
-├── main.py                         # FastAPI app (Task 3 + Task 4 endpoints)
-├── database.py                     # PostgreSQL connection + query execution
-├── validator.py                    # SQL safety validation
-├── sql_generator.py                # LLM decompose + generate SQL
-├── executor.py                     # Execute with retry logic
-├── llm_client.py                   # Groq API wrapper
-├── requirements.txt
-├── sql_questions_only.csv          # Benchmark dataset (copy here)
-├── prompts/
-│   └── templates.py                # All LLM prompt templates
-├── logs/
-│   ├── app.log                     # Application logs
-│   └── queries.jsonl               # Per-query structured log
-├── Task1_Part2_Evaluation_Strategy.md
-└── Task2_Query_Decompositions.md
-```
-
----
-
-## Safety Design
-
-- `validator.py` blocks any non-SELECT SQL before it reaches PostgreSQL
-- Statement timeout (10s) prevents runaway queries
-- Multiple statement injection blocked (`;` stacking)
-- All executions logged to `logs/queries.jsonl`
-- LLM fix prompts are sandboxed — they cannot execute arbitrary code
-
----
-
-## LLM Free Alternatives
-
-The system uses **Groq** by default (free, fast llama-3.3-70b).
-Other free alternatives:
-- **Google AI Studio** (Gemini): https://aistudio.google.com
-- **OpenRouter** (free tier): https://openrouter.ai
-- **Ollama** (local, no API key): https://ollama.com
-
-To switch, modify `llm_client.py` to point to the provider's API endpoint.
-
----
-
-## Docker (optional)
-
-Quick Docker setup to run the API and a local PostgreSQL DB using `docker-compose`.
-
-1. Build and run (from project root):
+### Option 2: Docker
 
 ```bash
 docker compose up --build
 ```
 
-2. The API will be available at http://localhost:8000.
+The app should be available at `http://localhost:8000`.
 
-3. By default `docker-compose.yml` seeds the database using `seed.sql`. Adjust credentials by editing `.env` or the `docker-compose.yml` environment section.
+---
 
-4. Useful commands:
+## API Endpoints
 
-```bash
-# Build only
-docker compose build
+### Health check
+
+```
+GET /health
+```
+
+### SQL pipeline endpoint
+
+```
+POST /pipeline/sql
+Content-Type: application/json
+
+{ "question": "Count customers per country" }
+```
+
+### Agent endpoint
+
+```
+POST /agent/sql
+Content-Type: application/json
+
+{ "question": "How many shipped orders are from USA customers?" }
+```
+
+### Benchmark evaluation
+
+```
+GET /evaluate
+```
+
+This endpoint runs the benchmark questions and returns aggregated performance metrics.
+
+---
+
+## Project structure
+
+```
+.
+├── Dockerfile
+├── docker-compose.yml
+├── README.md
+├── database.py
+├── docker-compose.yml
+├── evaluation_report.json
+├── executor.py
+├── llm_client.py
+├── main.py
+├── prompts/
+│   └── templates.py
+├── requirements.txt
+├── seed.sql
+├── sql_generator.py
+├── sql_questions_only.csv
+├── task1/
+│   ├── Task1_Completion_Summary.md
+│   ├── Task1_Part1_Ground_Truth.md
+│   ├── Task1_Part2_Evaluation_Framework.md
+│   ├── Task1_Part2_Evaluation_Strategy.md
+│   ├── generate_task1_part1.py
+│   └── task1_ground_truth_results.json
+├── task2/
+│   └── Task2_Query_Decompositions.md
+├── submission/
+│   ├── Week3_GenAI_Submission.md
+│   ├── Week3_Task_Plan.md
+│   └── task_progress.md
+└── test_agent.py
+```
+
+---
+
+## Key notes
+
+- The system is designed for **SELECT-only** SQL generation.
+- All database column names in classicmodels use camelCase and should be double-quoted in SQL, e.g. `"customerNumber"`.
+- Task 1 provides the benchmark ground truth and evaluation framework.
+- Task 2 contains manual decompositions for all 50 benchmark questions.
+
+---
+
+## Useful files
+
+- `task1/Task1_Part1_Ground_Truth.md` — ground truth SQL and query results
+- `task1/Task1_Part2_Evaluation_Framework.md` — evaluation methodology and metrics
+- `task2/Task2_Query_Decompositions.md` — intent/tables/columns/filters/joins/aggregation for each benchmark question
+- `submission/task_progress.md` — current progress and status
+
+---
+
+## Docker notes
+
+The included `docker-compose.yml` starts a PostgreSQL container seeded from `seed.sql` and runs the app container.
+
+Use `docker compose up --build` to start the environment.
+
+---
+
+## Next steps
+
+1. Complete Task 2: decompose all benchmark questions
+2. Build Task 3: prompt-chaining Text-to-SQL pipeline
+3. Build Task 4: FastAPI SQL agent with retry and summarization
+4. Run benchmark evaluation and update `evaluation_report.json`
+
 
 # Start in background
 docker compose up -d
