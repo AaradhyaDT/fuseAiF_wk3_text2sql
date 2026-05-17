@@ -111,6 +111,19 @@ GET /evaluate
 ```
 
 This endpoint runs the benchmark questions and returns aggregated performance metrics.
+The latest benchmark run is saved in `evaluation_report.json` and contains the full 50-question agent report.
+
+Current report summary:
+
+- total_questions: 50
+- execution_success_rate: 16.0%
+- execution_accuracy: 6.0%
+- retry_rate: 0.0%
+- success_count: 8
+- correct_count: 3
+- failed_count: 42
+
+The JSON file includes per-question generated SQL, execution outcome, correctness, retry status, and summary text.
 
 ---
 

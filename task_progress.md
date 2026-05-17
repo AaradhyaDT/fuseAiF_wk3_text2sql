@@ -17,9 +17,9 @@
 
 ## Remaining tasks
 
-- [ ] Add full benchmark report details to submission package and docs
+- [x] Add full benchmark report details to submission package and docs
 - [ ] Capture final screenshots and run final README/summary review
-- [ ] Run the full agent benchmark and record final metrics
+- [x] Run the full agent benchmark and record final metrics
 - [ ] Confirm deployment readiness or package the submission artifacts
 
 ## Notes

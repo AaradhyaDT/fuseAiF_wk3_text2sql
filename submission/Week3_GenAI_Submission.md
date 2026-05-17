@@ -801,13 +801,20 @@ Attempt 2: SELECT c."customerName" FROM orders o
 
 ## Benchmark Evaluation (GET /evaluate)
 
-| Question | Generated SQL | Executed | Correct | Retry | Status |
-|----------|--------------|----------|---------|-------|--------|
-| Count customers in USA | SELECT COUNT("customerNumber")... | ✓ | ✓ | No | Success |
-| List all products | SELECT * FROM products | ✓ | ✓ | No | Success |
-| Orders from Germany | SELECT o."orderNumber"... JOIN... | ✓ | ✓ | No | Success |
-| Total revenue | SELECT SUM("amount")... | ✓ | ✓ | No | Success |
-| Employees per office | SELECT o.city, COUNT(...)... | ✓ | ✓ | No | Success |
+The full benchmark report is available in `evaluation_report.json`.
+The latest run covers all 50 benchmark questions and records both execution and correctness metrics for the agent.
+
+### Latest evaluation results
+
+- Questions evaluated: 50
+- Execution success rate: 16.0%
+- Execution accuracy: 6.0%
+- Retry rate: 0.0%
+- Successful executions: 8
+- Correct results: 3
+- Failed executions: 42
+
+The JSON report includes per-question details such as generated SQL, execution outcome, whether the result matched ground truth, retry usage, and a natural language summary.
 
 `[SCREENSHOT — GET /evaluate full output]`
 
