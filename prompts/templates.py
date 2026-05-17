@@ -53,7 +53,7 @@ Required JSON format:
   "aggregation": "<COUNT/SUM/AVG/MAX/MIN or null>",
   "group_by": ["<column>"]
 }}
-""".format(schema=SCHEMA_CONTEXT, question="{question}")
+"""
 
 
 SQL_GENERATION_PROMPT = """You are a PostgreSQL expert.

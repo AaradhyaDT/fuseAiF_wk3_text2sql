@@ -236,3 +236,40 @@ Other free alternatives:
 - **Ollama** (local, no API key): https://ollama.com
 
 To switch, modify `llm_client.py` to point to the provider's API endpoint.
+
+---
+
+## Docker (optional)
+
+Quick Docker setup to run the API and a local PostgreSQL DB using `docker-compose`.
+
+1. Build and run (from project root):
+
+```bash
+docker compose up --build
+```
+
+2. The API will be available at http://localhost:8000.
+
+3. By default `docker-compose.yml` seeds the database using `seed.sql`. Adjust credentials by editing `.env` or the `docker-compose.yml` environment section.
+
+4. Useful commands:
+
+```bash
+# Build only
+docker compose build
+
+# Start in background
+docker compose up -d
+
+# Stop and remove containers
+docker compose down -v
+
+# View logs
+docker compose logs -f
+```
+
+Notes:
+- The `Dockerfile` uses Python 3.11-slim. The app reads DB config from environment variables, so Docker Compose wires the `db` service hostname for you.
+- If you already have a local Postgres instance on 5432, stop it or change port mapping in `docker-compose.yml`.
+

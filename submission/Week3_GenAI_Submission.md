@@ -198,6 +198,28 @@ FROM orders;
 ```sql
 SELECT o."orderNumber", o."orderDate", o."status", c."customerName"
 FROM orders o
+```
+
+---
+
+## Evaluation Results (Automated)
+
+I ran the full 50-question benchmark using the agent endpoint (`GET /evaluate`) inside the Dockerized environment.
+
+- Total questions: 50
+- Execution success (queries that ran): 10
+- Execution accuracy (matched ground truth): 7
+- Execution success rate: 20.0%
+- Execution accuracy: 14.0%
+
+Full evaluation JSON report saved as [evaluation_report.json](evaluation_report.json).
+
+Notes:
+- Some queries failed to generate SQL (LLM generation returned errors for those prompts). I fixed several bugs (prompt formatting, JSON parsing, Decimal serialization) and restarted the app; remaining failures are likely due to model output variability and can be improved by prompt tuning or increasing retries.
+- The project is Dockerized — see README for `docker compose up` instructions to reproduce.
+
+---
+
 JOIN customers c ON o."customerNumber" = c."customerNumber";
 ```
 **Explanation:** Joins orders and customers on customerNumber to show who placed each order.

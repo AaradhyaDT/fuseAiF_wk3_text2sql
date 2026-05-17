@@ -81,7 +81,7 @@ def _log_query(payload: dict):
     """Append each query run to a JSONL log file."""
     entry = {"timestamp": datetime.utcnow().isoformat(), **payload}
     with open(LOG_DIR / "queries.jsonl", "a") as f:
-        f.write(json.dumps(entry) + "\n")
+        f.write(json.dumps(entry, default=str) + "\n")
 
 
 def _generate_summary(question: str, result: dict) -> str:
@@ -90,7 +90,7 @@ def _generate_summary(question: str, result: dict) -> str:
     rows_preview = result.get("rows", [])[:10]
     prompt = SUMMARY_PROMPT.format(
         question=question,
-        result=json.dumps(rows_preview),
+        result=json.dumps(rows_preview, default=str),
     )
     try:
         return call_llm(prompt, temperature=0.2, max_tokens=150)

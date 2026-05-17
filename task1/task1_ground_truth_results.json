@@ -1,0 +1,537 @@
+{
+  "Q1. List all products": {
+    "sql": "Q1. List all products",
+    "success": true,
+    "row_count": 110,
+    "columns": [
+      "productCode",
+      "productName",
+      "productLine",
+      "productScale",
+      "productVendor",
+      "productDescription",
+      "quantityInStock",
+      "buyPrice",
+      "MSRP"
+    ],
+    "error": null
+  },
+  "Q2. Get all customers": {
+    "sql": "Q2. Get all customers",
+    "success": true,
+    "row_count": 122,
+    "columns": [
+      "customerNumber",
+      "customerName",
+      "contactLastName",
+      "contactFirstName",
+      "phone",
+      "addressLine1",
+      "addressLine2",
+      "city",
+      "state",
+      "postalCode",
+      "country",
+      "salesRepEmployeeNumber",
+      "creditLimit"
+    ],
+    "error": null
+  },
+  "Q3. Show all orders": {
+    "sql": "Q3. Show all orders",
+    "success": true,
+    "row_count": 326,
+    "columns": [
+      "orderNumber",
+      "orderDate",
+      "requiredDate",
+      "shippedDate",
+      "status",
+      "comments",
+      "customerNumber"
+    ],
+    "error": null
+  },
+  "Q4. List all employees": {
+    "sql": "Q4. List all employees",
+    "success": true,
+    "row_count": 23,
+    "columns": [
+      "employeeNumber",
+      "lastName",
+      "firstName",
+      "extension",
+      "email",
+      "officeCode",
+      "reportsTo",
+      "jobTitle"
+    ],
+    "error": null
+  },
+  "Q5. Get all offices": {
+    "sql": "Q5. Get all offices",
+    "success": true,
+    "row_count": 7,
+    "columns": [
+      "officeCode",
+      "city",
+      "phone",
+      "addressLine1",
+      "addressLine2",
+      "state",
+      "country",
+      "postalCode",
+      "territory"
+    ],
+    "error": null
+  },
+  "Q6. Show all product lines": {
+    "sql": "Q6. Show all product lines",
+    "success": true,
+    "row_count": 7,
+    "columns": [
+      "productLine",
+      "textDescription",
+      "htmlDescription",
+      "image"
+    ],
+    "error": null
+  },
+  "Q7. List all payments": {
+    "sql": "Q7. List all payments",
+    "success": true,
+    "row_count": 273,
+    "columns": [
+      "customerNumber",
+      "checkNumber",
+      "paymentDate",
+      "amount"
+    ],
+    "error": null
+  },
+  "Q8. Get product names and prices": {
+    "sql": "Q8. Get product names and prices",
+    "success": true,
+    "row_count": 110,
+    "columns": [
+      "productName",
+      "buyPrice",
+      "MSRP"
+    ],
+    "error": null
+  },
+  "Q9. Get customer names and cities": {
+    "sql": "Q9. Get customer names and cities",
+    "success": true,
+    "row_count": 122,
+    "columns": [
+      "customerName",
+      "city"
+    ],
+    "error": null
+  },
+  "Q10. List employee first and last names": {
+    "sql": "Q10. List employee first and last names",
+    "success": true,
+    "row_count": 23,
+    "columns": [
+      "firstName",
+      "lastName"
+    ],
+    "error": null
+  },
+  "Q11. Get all order dates": {
+    "sql": "Q11. Get all order dates",
+    "success": true,
+    "row_count": 326,
+    "columns": [
+      "orderNumber",
+      "orderDate"
+    ],
+    "error": null
+  },
+  "Q12. Show product vendor list": {
+    "sql": "Q12. Show product vendor list",
+    "success": true,
+    "row_count": 13,
+    "columns": [
+      "productVendor"
+    ],
+    "error": null
+  },
+  "Q13. Get all product codes": {
+    "sql": "Q13. Get all product codes",
+    "success": true,
+    "row_count": 110,
+    "columns": [
+      "productCode"
+    ],
+    "error": null
+  },
+  "Q14. List all countries from offices": {
+    "sql": "Q14. List all countries from offices",
+    "success": true,
+    "row_count": 5,
+    "columns": [
+      "country"
+    ],
+    "error": null
+  },
+  "Q15. Show all order statuses": {
+    "sql": "Q15. Show all order statuses",
+    "success": true,
+    "row_count": 6,
+    "columns": [
+      "status"
+    ],
+    "error": null
+  },
+  "Q16. Get all payment amounts": {
+    "sql": "Q16. Get all payment amounts",
+    "success": true,
+    "row_count": 273,
+    "columns": [
+      "checkNumber",
+      "amount",
+      "paymentDate"
+    ],
+    "error": null
+  },
+  "Q17. List all job titles": {
+    "sql": "Q17. List all job titles",
+    "success": true,
+    "row_count": 7,
+    "columns": [
+      "jobTitle"
+    ],
+    "error": null
+  },
+  "Q18. Get customer phone numbers": {
+    "sql": "Q18. Get customer phone numbers",
+    "success": true,
+    "row_count": 122,
+    "columns": [
+      "customerName",
+      "phone"
+    ],
+    "error": null
+  },
+  "Q19. Show product MSRP values": {
+    "sql": "Q19. Show product MSRP values",
+    "success": true,
+    "row_count": 110,
+    "columns": [
+      "productName",
+      "MSRP"
+    ],
+    "error": null
+  },
+  "Q20. List order numbers": {
+    "sql": "Q20. List order numbers",
+    "success": true,
+    "row_count": 326,
+    "columns": [
+      "orderNumber"
+    ],
+    "error": null
+  },
+  "Q21. Get orders with customer names": {
+    "sql": "Q21. Get orders with customer names",
+    "success": true,
+    "row_count": 326,
+    "columns": [
+      "orderNumber",
+      "orderDate",
+      "customerName"
+    ],
+    "error": null
+  },
+  "Q22. Get employees with office city": {
+    "sql": "Q22. Get employees with office city",
+    "success": true,
+    "row_count": 23,
+    "columns": [
+      "firstName",
+      "lastName",
+      "city"
+    ],
+    "error": null
+  },
+  "Q23. Get payments with customer names": {
+    "sql": "Q23. Get payments with customer names",
+    "success": true,
+    "row_count": 273,
+    "columns": [
+      "customerName",
+      "checkNumber",
+      "amount",
+      "paymentDate"
+    ],
+    "error": null
+  },
+  "Q24. Get order details with product names": {
+    "sql": "Q24. Get order details with product names",
+    "success": true,
+    "row_count": 2996,
+    "columns": [
+      "orderNumber",
+      "productName",
+      "quantityOrdered",
+      "priceEach"
+    ],
+    "error": null
+  },
+  "Q25. Get products with product line description": {
+    "sql": "Q25. Get products with product line description",
+    "success": true,
+    "row_count": 110,
+    "columns": [
+      "productName",
+      "textDescription"
+    ],
+    "error": null
+  },
+  "Q26. Get customers with sales rep names": {
+    "sql": "Q26. Get customers with sales rep names",
+    "success": true,
+    "row_count": 100,
+    "columns": [
+      "customerName",
+      "salesRepName"
+    ],
+    "error": null
+  },
+  "Q27. Get orders with customer city": {
+    "sql": "Q27. Get orders with customer city",
+    "success": true,
+    "row_count": 326,
+    "columns": [
+      "orderNumber",
+      "orderDate",
+      "city"
+    ],
+    "error": null
+  },
+  "Q28. Get employees and their manager": {
+    "sql": "Q28. Get employees and their manager",
+    "success": true,
+    "row_count": 23,
+    "columns": [
+      "employee",
+      "manager"
+    ],
+    "error": null
+  },
+  "Q29. Get order details with product vendor": {
+    "sql": "Q29. Get order details with product vendor",
+    "success": true,
+    "row_count": 2996,
+    "columns": [
+      "orderNumber",
+      "productVendor",
+      "quantityOrdered"
+    ],
+    "error": null
+  },
+  "Q30. Get payments with customer country": {
+    "sql": "Q30. Get payments with customer country",
+    "success": true,
+    "row_count": 273,
+    "columns": [
+      "checkNumber",
+      "amount",
+      "country"
+    ],
+    "error": null
+  },
+  "Q31. Count customers per country": {
+    "sql": "Q31. Count customers per country",
+    "success": true,
+    "row_count": 28,
+    "columns": [
+      "country",
+      "customer_count"
+    ],
+    "error": null
+  },
+  "Q32. Total payments per customer": {
+    "sql": "Q32. Total payments per customer",
+    "success": true,
+    "row_count": 98,
+    "columns": [
+      "customerName",
+      "total_paid"
+    ],
+    "error": null
+  },
+  "Q33. Number of orders per status": {
+    "sql": "Q33. Number of orders per status",
+    "success": true,
+    "row_count": 6,
+    "columns": [
+      "status",
+      "order_count"
+    ],
+    "error": null
+  },
+  "Q34. Products per product line": {
+    "sql": "Q34. Products per product line",
+    "success": true,
+    "row_count": 7,
+    "columns": [
+      "productLine",
+      "product_count"
+    ],
+    "error": null
+  },
+  "Q35. Employees per office": {
+    "sql": "Q35. Employees per office",
+    "success": true,
+    "row_count": 7,
+    "columns": [
+      "city",
+      "employee_count"
+    ],
+    "error": null
+  },
+  "Q36. Total stock per product vendor": {
+    "sql": "Q36. Total stock per product vendor",
+    "success": true,
+    "row_count": 13,
+    "columns": [
+      "productVendor",
+      "total_stock"
+    ],
+    "error": null
+  },
+  "Q37. Average buy price per product line": {
+    "sql": "Q37. Average buy price per product line",
+    "success": true,
+    "row_count": 7,
+    "columns": [
+      "productLine",
+      "avg_buy_price"
+    ],
+    "error": null
+  },
+  "Q38. Orders per customer": {
+    "sql": "Q38. Orders per customer",
+    "success": true,
+    "row_count": 98,
+    "columns": [
+      "customerName",
+      "order_count"
+    ],
+    "error": null
+  },
+  "Q39. Max MSRP per product line": {
+    "sql": "Q39. Max MSRP per product line",
+    "success": true,
+    "row_count": 7,
+    "columns": [
+      "productLine",
+      "max_msrp"
+    ],
+    "error": null
+  },
+  "Q40. Min buy price per vendor": {
+    "sql": "Q40. Min buy price per vendor",
+    "success": true,
+    "row_count": 13,
+    "columns": [
+      "productVendor",
+      "min_buy_price"
+    ],
+    "error": null
+  },
+  "Q41. Total number of customers": {
+    "sql": "Q41. Total number of customers",
+    "success": true,
+    "row_count": 1,
+    "columns": [
+      "total_customers"
+    ],
+    "error": null
+  },
+  "Q42. Total number of products": {
+    "sql": "Q42. Total number of products",
+    "success": true,
+    "row_count": 1,
+    "columns": [
+      "total_products"
+    ],
+    "error": null
+  },
+  "Q43. Total revenue from payments": {
+    "sql": "Q43. Total revenue from payments",
+    "success": true,
+    "row_count": 1,
+    "columns": [
+      "total_revenue"
+    ],
+    "error": null
+  },
+  "Q44. Average product price": {
+    "sql": "Q44. Average product price",
+    "success": true,
+    "row_count": 1,
+    "columns": [
+      "avg_buy_price"
+    ],
+    "error": null
+  },
+  "Q45. Max payment amount": {
+    "sql": "Q45. Max payment amount",
+    "success": true,
+    "row_count": 1,
+    "columns": [
+      "max_payment"
+    ],
+    "error": null
+  },
+  "Q46. Min payment amount": {
+    "sql": "Q46. Min payment amount",
+    "success": true,
+    "row_count": 1,
+    "columns": [
+      "min_payment"
+    ],
+    "error": null
+  },
+  "Q47. Count total orders": {
+    "sql": "Q47. Count total orders",
+    "success": true,
+    "row_count": 1,
+    "columns": [
+      "total_orders"
+    ],
+    "error": null
+  },
+  "Q48. Total quantity in stock": {
+    "sql": "Q48. Total quantity in stock",
+    "success": true,
+    "row_count": 1,
+    "columns": [
+      "total_stock"
+    ],
+    "error": null
+  },
+  "Q49. Average MSRP": {
+    "sql": "Q49. Average MSRP",
+    "success": true,
+    "row_count": 1,
+    "columns": [
+      "avg_msrp"
+    ],
+    "error": null
+  },
+  "Q50. Number of employees": {
+    "sql": "Q50. Number of employees",
+    "success": true,
+    "row_count": 1,
+    "columns": [
+      "total_employees"
+    ],
+    "error": null
+  }
+}

@@ -21,7 +21,7 @@ def decompose_question(question: str) -> dict:
     Stage 1: Break a natural language question into structured components.
     Returns a decomposition dict.
     """
-    prompt = DECOMPOSITION_PROMPT.format(question=question)
+    prompt = DECOMPOSITION_PROMPT.format(schema=SCHEMA_CONTEXT, question=question)
     try:
         decomposition = call_llm_json(prompt)
         logger.info(f"Decomposition OK for: {question!r}")

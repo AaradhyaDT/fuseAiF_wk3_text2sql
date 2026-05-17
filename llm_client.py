@@ -61,8 +61,20 @@ def call_llm_json(prompt: str) -> dict:
     raw = call_llm(prompt, temperature=0.0)
     # Strip ```json ... ``` if model adds it despite instructions
     clean = re.sub(r"```(?:json)?\s*", "", raw).replace("```", "").strip()
+    # If the model returned extra text around the JSON, try to extract the JSON object
+    if not clean.startswith("{"):
+        # find the first { and the last } and attempt to parse that substring
+        start = clean.find("{")
+        end = clean.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            candidate = clean[start : end + 1]
+        else:
+            candidate = clean
+    else:
+        candidate = clean
+
     try:
-        return json.loads(clean)
+        return json.loads(candidate)
     except json.JSONDecodeError as e:
-        logger.error(f"JSON parse failed. Raw:\n{raw}\nError: {e}")
+        logger.error("JSON parse failed. Raw response:\n%s\nCandidate JSON:\n%s\nError: %s", raw, candidate, e)
         raise ValueError(f"LLM returned invalid JSON: {e}\nRaw: {raw}")

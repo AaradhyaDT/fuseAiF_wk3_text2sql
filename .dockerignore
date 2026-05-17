@@ -1,0 +1,16 @@
+.venv
+.venv/
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.git
+.gitignore
+logs/
+graphify-out/
+prompts/
+*.sqlite3
+.env
