@@ -87,15 +87,24 @@ def _log_query(payload: dict):
 def _generate_summary(question: str, result: dict) -> str:
     """Ask LLM to convert raw result rows into a human-readable sentence."""
     # Trim result to avoid token bloat
-    rows_preview = result.get("rows", [])[:10]
+    rows = result.get("rows", [])
+    rows_preview = rows[:10]
+    row_count = result.get("row_count", len(rows))
+
+    # Provide both total row count and preview to ensure LLM summaries are accurate
+    data_payload = {
+        "total_rows_matching_query": row_count,
+        "data_preview": rows_preview
+    }
+
     prompt = SUMMARY_PROMPT.format(
         question=question,
-        result=json.dumps(rows_preview, default=str),
+        result=json.dumps(data_payload, default=str),
     )
     try:
         return call_llm(prompt, temperature=0.2, max_tokens=150)
     except Exception:
-        return f"Query returned {result.get('row_count', 0)} rows."
+        return f"Query returned {row_count} rows."
 
 
 def _compare_results(gen_res: dict, gt_res: dict, has_order_by: bool) -> bool:
@@ -181,7 +190,7 @@ def pipeline_sql(req: QuestionRequest):
 
 
 @app.post("/agent/sql", response_model=AgentResponse)
-def agent_sql(req: QuestionRequest):
+def agent_sql(req: QuestionRequest, skip_summary: bool = False):
     """
     Task 4: Full mini SQL agent — 3 retries + natural language summary.
     """
@@ -220,7 +229,10 @@ def agent_sql(req: QuestionRequest):
 
     # Step 5: Natural language summary
     if exec_result["status"] == "success":
-        summary = _generate_summary(question, exec_result["result"])
+        if skip_summary:
+            summary = f"Query returned {exec_result['result'].get('row_count', 0)} rows."
+        else:
+            summary = _generate_summary(question, exec_result["result"])
     else:
         summary = (
             f"I was unable to answer this question after "
@@ -274,7 +286,7 @@ def evaluate_benchmark():
     for q in questions:
         req = QuestionRequest(question=q)
         try:
-            resp = agent_sql(req)
+            resp = agent_sql(req, skip_summary=True)
 
             # Fetch ground truth and run it to get expected result for Execution Accuracy (EA)
             gt_sql = GROUND_TRUTH_SQL.get(q)
@@ -329,6 +341,7 @@ def evaluate_benchmark():
             failed_count += 1
 
         results.append(row)
+        time.sleep(1.0)  # Moderate pacing delay to stay well within Groq rate limits
 
     total = len(questions)
     return {
