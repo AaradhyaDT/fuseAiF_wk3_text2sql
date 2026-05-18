@@ -81,6 +81,16 @@ If using Docker, `docker-compose.yml` should mount and initialize the database a
 
 ## Run locally
 
+### Fastest Windows shortcut
+
+Run the bundled Windows launcher:
+
+```powershell
+run_app.bat
+```
+
+This is the fastest and easiest way to start the WK3 app stack locally on Windows.
+
 ### Option 1: Python
 
 ```bash
